@@ -29,6 +29,11 @@
   --bc: var(--edge);
   content-visibility: auto;
   contain-intrinsic-size: auto 190px;
+  /* `content-visibility: auto`'s contain-intrinsic-size fallback becomes
+     this item's min-content contribution to the grid track — without
+     resetting it, a 1fr column can never shrink below that fallback size,
+     which forced every tile to a flat 90px even on a 320px phone. */
+  min-width: 0;
   position: relative;
   display: block;
   padding: var(--px);

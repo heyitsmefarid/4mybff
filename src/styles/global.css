@@ -301,6 +301,12 @@ button {
   gap: 14px;
   margin-bottom: clamp(16px, 4vw, 28px);
   flex-wrap: wrap;
+  /* .hud is `position: fixed` at the same top-right corner, outside normal
+     flow — the topbar has no way to know it's there. Reserve its width so a
+     long title can never grow underneath it (measured overlapping by 53px on
+     a 320px phone before this). The HUD's own width barely changes across
+     breakpoints (fixed-size icon buttons), so a flat reserve is enough. */
+  padding-right: 100px;
 }
 
 .topbar__title {

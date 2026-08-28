@@ -251,6 +251,21 @@ Three things worth knowing before you edit CSS:
 - **Backdrop drift must be a `transform`, never `background-position`.**
   Animating the background repaints the whole viewport every frame — it cost
   the whole site 15fps until it was changed to a composited translate.
+- **`.hud` (theme/sound buttons) is `position: fixed`, outside every screen's
+  normal flow.** `.topbar` has no way to know it's there, so a long title can
+  grow straight underneath it — measured overlapping by 53px on a 320px
+  phone. `.topbar` now carries a flat `padding-right: 100px` to keep clear of
+  it; the HUD's own width barely changes across breakpoints, so a fixed
+  reserve is enough.
+- **`contain-intrinsic-size`'s fallback becomes a grid item's min-content
+  contribution.** A grid item defaults to `min-width: auto`, i.e. "never
+  shrink below your content's minimum size" — and under `content-visibility:
+  auto`, that minimum IS the `contain-intrinsic-size` fallback. That silently
+  floored every reason tile at a flat 90px, wide enough that 5 columns
+  couldn't fit a 320px phone (tiles were laid out past the right edge, hidden
+  rather than scrollable because of the `overflow-x: clip` above). Every tile
+  using `content-visibility: auto` inside a `fr`-sized grid needs an explicit
+  `min-width: 0` to give that back.
 - **A custom property that references another one is resolved where it is
   DECLARED, not where it is used.** `--bloom: 0 0 30px -4px var(--bc)` on
   `:root` computes *invalid* (there is no `--bc` there), and every descendant
