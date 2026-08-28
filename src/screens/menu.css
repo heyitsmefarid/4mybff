@@ -1,0 +1,145 @@
+.menu__inner {
+  justify-content: center;
+  gap: clamp(20px, 5vw, 40px);
+}
+
+.menu__head { text-align: center }
+
+.menu__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 4px;
+  color: var(--gold);
+}
+
+.menu__name {
+  margin-top: 12px;
+  font-size: var(--fs-lg);
+  color: var(--ink);
+  letter-spacing: 2px;
+}
+
+/* ---- list ---- */
+
+.menu__list {
+  display: grid;
+  /* every row matches the tallest, so a label that wraps to two lines doesn't
+     leave the list ragged */
+  grid-auto-rows: 1fr;
+  gap: clamp(12px, 3vw, 18px);
+}
+
+.menu__item {
+  --bc: var(--faint);
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px auto 1fr auto auto;
+  align-items: center;
+  gap: clamp(10px, 2.6vw, 18px);
+  padding: clamp(12px, 3.2vw, 20px) clamp(12px, 3vw, 20px);
+  text-align: left;
+  background: var(--bg-1);
+  transition: background 140ms, transform 120ms steps(2, end);
+}
+
+.menu__item::after {
+  /* a light sweep that crosses the selected row */
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--item-color) 14%, transparent),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu__item.is-selected {
+  --bc: var(--item-color);
+  background: var(--bg-2);
+  transform: translateX(var(--px));
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc),
+    0 0 28px -6px var(--bc);
+}
+
+.menu__item.is-selected::after { opacity: 1; animation: sheen 2.6s linear infinite }
+
+.menu__cursor { opacity: 0; transition: opacity 100ms }
+.menu__item.is-selected .menu__cursor { opacity: 1; animation: bob-x .5s steps(2, end) infinite }
+
+.menu__badge {
+  display: grid;
+  place-items: center;
+  width: clamp(38px, 11vw, 48px);
+  height: clamp(38px, 11vw, 48px);
+  background: var(--well);
+  box-shadow: inset 0 0 0 2px var(--hairline);
+}
+
+.menu__item.is-selected .menu__badge { animation: bob 1s ease-in-out infinite }
+
+.menu__text { display: flex; flex-direction: column; gap: 7px; min-width: 0 }
+
+.menu__label {
+  font-size: var(--fs-md);
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.menu__item.is-selected .menu__label {
+  color: var(--item-color);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--item-color) 60%, transparent);
+}
+
+.menu__sub {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.15;
+  color: var(--muted);
+}
+
+.menu__lv {
+  font-size: var(--fs-2xs);
+  color: var(--faint);
+  letter-spacing: 1px;
+}
+
+.menu__chev { opacity: .35; transition: opacity 120ms }
+.menu__item.is-selected .menu__chev { opacity: 1; animation: bob-x .6s steps(2, end) infinite }
+
+/* ---- footer ---- */
+
+.menu__foot { text-align: center; display: flex; flex-direction: column; gap: 10px }
+
+.menu__keys {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: var(--fs-2xs);
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+.menu__note {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--dim);
+  line-height: 1.2;
+}
+
+@media (max-width: 460px) {
+  .menu__item { grid-template-columns: 18px auto 1fr auto; gap: 10px }
+  .menu__chev { display: none }
+}

@@ -1,0 +1,101 @@
+/* ===========================================================================
+   LETTER — the long-form panel shared by the song dedication and the closing
+   note under the 101 reasons.
+   =========================================================================*/
+
+.letter {
+  --bc: var(--ink);
+  margin-bottom: clamp(16px, 3.5vw, 24px);
+  background: var(--bg-1);
+  animation: fade-up 420ms ease both;
+}
+
+.letter__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 2.5px;
+  color: var(--ink);
+  background: var(--bg-2);
+  box-shadow: inset 0 calc(var(--px) * -1) 0 0 var(--inset);
+}
+
+.letter__for { color: var(--gold); letter-spacing: 1.5px }
+
+.letter__body {
+  max-width: 62ch;              /* a letter should read like a letter */
+  margin: 0 auto;
+  padding: clamp(20px, 5vw, 36px) clamp(16px, 4vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.6vw, 20px);
+}
+
+.letter__p {
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  line-height: 1.42;
+  color: var(--text);
+  white-space: pre-wrap;   /* a stanza can be written as one paragraph */
+}
+
+.letter__quote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: clamp(8px, 2vw, 16px) 0;
+  padding: clamp(16px, 3.5vw, 24px) clamp(10px, 3vw, 20px);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  line-height: 1.9;
+  letter-spacing: 1px;
+  color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--gold),
+    0 var(--px) 0 0 var(--gold);
+}
+
+.letter__mark { flex: none; animation: bob 2s ease-in-out infinite }
+.letter__mark:last-child { animation-delay: 1s }
+
+.letter__sign {
+  margin-top: 6px;
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  color: var(--gold);
+}
+
+
+/* ---- scrollable variant: header stays put, body scrolls ---- */
+
+.letter--scroll {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.letter--scroll .letter__head { flex: none }
+
+.letter--scroll .letter__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 3%, #000 97%, transparent);
+}
+
+/* On a phone a nested scroller fights the page, so let it grow instead. */
+@media (max-width: 899px) {
+  .letter--scroll .letter__body {
+    overflow-y: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}

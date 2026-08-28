@@ -1,0 +1,217 @@
+.rs__actions { display: flex; gap: 8px }
+
+.rs__mini {
+  padding: 8px 10px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 1px;
+}
+
+/* ---- progress meter ---- */
+
+.rs__progress {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 2.5vw, 16px);
+  margin-bottom: clamp(14px, 3.5vw, 22px);
+}
+
+.rs__count {
+  font-size: var(--fs-md);
+  color: var(--ink);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.rs__meter {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  padding: 3px;
+  background: var(--well);
+  box-shadow: inset 0 0 0 2px var(--hairline);
+}
+
+.rs__meter-seg {
+  flex: 1;
+  background: var(--track);
+  transition: background 200ms;
+}
+
+.rs__meter-seg.is-on {
+  background: var(--ink);
+  box-shadow: var(--bloom-ink);
+}
+
+.rs__pct {
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  min-width: 4ch;
+  text-align: right;
+}
+
+/* ---- completion banner ---- */
+
+.rs__done {
+  --bc: var(--gold);
+  padding: clamp(14px, 3.5vw, 22px);
+  margin-bottom: clamp(14px, 3.5vw, 22px);
+  text-align: center;
+  background: var(--bg-1);
+  animation: pop-in 420ms steps(5, end) both;
+}
+
+.rs__done-title {
+  font-size: var(--fs-md);
+  color: var(--gold);
+  letter-spacing: 2px;
+  line-height: 1.6;
+}
+
+.rs__done-sub {
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+/* ---- tile grid ---- */
+
+.rs__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(6px, 1.6vw, 10px);
+  margin-bottom: clamp(20px, 4vw, 32px);
+}
+
+@media (min-width: 520px) { .rs__grid { grid-template-columns: repeat(8, 1fr) } }
+@media (min-width: 760px) { .rs__grid { grid-template-columns: repeat(10, 1fr) } }
+
+.rs__tile {
+  --bc: var(--edge);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 90px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 1;
+  background: var(--bg-1);
+  animation: pop-in 260ms steps(4, end) backwards;
+  transition: transform 110ms steps(2, end), background 140ms;
+}
+
+.rs__tile:hover,
+.rs__tile:focus-visible {
+  --bc: var(--acc);
+  outline: none;
+  transform: translateY(calc(var(--px) * -1));
+  background: var(--bg-2);
+}
+
+.rs__tile-num {
+  font-size: var(--fs-2xs);
+  color: var(--dim);
+  line-height: 1;
+}
+
+.rs__tile.is-open {
+  --bc: var(--ink);
+  background: var(--bg-2);
+}
+
+.rs__tile.is-open .rs__tile-num { color: var(--gold) }
+
+.rs__tile-icon { display: grid; place-items: center; line-height: 0 }
+
+/* ---- reason card ---- */
+
+.rs__modal {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 5vw, 40px);
+  background: var(--scrim);
+  animation: fade-up 180ms ease both;
+}
+
+.rs__card {
+  --bc: var(--ink);
+  width: min(520px, 100%);
+  background: var(--bg-1);
+  animation: pop-in 300ms steps(5, end) both;
+}
+
+.rs__card-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  box-shadow: inset 0 calc(var(--px) * -1) 0 0 var(--inset);
+}
+
+.rs__card-no {
+  font-size: var(--fs-2xs);
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.rs__card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(22px, 6vw, 38px) clamp(18px, 5vw, 30px);
+  min-height: 190px;
+  text-align: center;
+}
+
+.rs__card-heart { animation: bob 1.8s ease-in-out infinite }
+
+.rs__card-text {
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.rs__card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px;
+  background: var(--bg-2);
+}
+
+.rs__card-pos {
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  min-width: 8ch;
+  text-align: center;
+}
+
+/* ---- confetti ---- */
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 750;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti__bit {
+  position: absolute;
+  top: 0;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}

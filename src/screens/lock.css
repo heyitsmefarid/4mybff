@@ -1,0 +1,170 @@
+.lock__inner {
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.6vw, 18px);
+  text-align: center;
+}
+
+.lock__icon {
+  transition: transform 200ms steps(3, end);
+  animation: bob 2.6s ease-in-out infinite;
+}
+
+.lock__icon.is-open {
+  animation: pop-in 420ms steps(4, end) both;
+  transform: rotate(-12deg);
+}
+
+.lock__prompt {
+  font-size: var(--fs-md);
+  color: var(--acc);
+  letter-spacing: 1px;
+  max-width: 26ch;
+  line-height: 1.6;
+}
+
+.lock__lives { display: flex; gap: 6px }
+.lock__life { animation: softpulse 2s ease-in-out infinite }
+.lock__life.is-lost { animation: none; opacity: .8 }
+
+/* ---- slots ---- */
+
+.lock__slots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.lock__slots.is-shaking { animation: shake 500ms steps(2, end) }
+
+.lock__slot-wrap { display: inline-flex; align-items: center; gap: 10px }
+
+.lock__slot {
+  --bc: var(--faint);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(38px, 12vw, 56px);
+  height: clamp(48px, 15vw, 70px);
+  background: var(--well);
+  font-size: var(--fs-lg);
+  color: var(--text);
+  transition: color 120ms;
+  /* frame + recessed inner shadow in one declaration */
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc),
+    inset 0 var(--px) 0 0 var(--inset),
+    inset var(--px) 0 0 0 var(--inset);
+}
+
+.lock__slot.is-active {
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc),
+    inset 0 var(--px) 0 0 var(--inset),
+    0 0 22px -4px var(--bc);
+}
+
+.lock__slot.is-filled {
+  --bc: var(--ink);
+  color: var(--gold);
+  text-shadow: var(--bloom-gold);
+}
+
+.lock__slot.is-active { --bc: var(--acc) }
+
+.lock__cursor {
+  display: block;
+  width: 60%;
+  height: var(--px);
+  background: var(--acc);
+  box-shadow: 0 0 10px var(--acc);
+  animation: blink .9s steps(1, end) infinite;
+}
+
+.lock__sep {
+  font-size: var(--fs-lg);
+  color: var(--faint);
+}
+
+.lock__format {
+  font-size: var(--fs-2xs);
+  color: var(--dim);
+  letter-spacing: 2px;
+}
+
+/* ---- status line ---- */
+
+.lock__status { min-height: 2.4em; display: flex; align-items: center }
+
+.lock__error {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--red);
+  text-shadow: var(--bloom-red);
+  animation: pop-in 260ms steps(3, end);
+  max-width: 34ch;
+  line-height: 1.25;
+}
+
+.lock__error.is-empty { visibility: hidden }
+
+.lock__granted {
+  font-size: var(--fs-md);
+  color: var(--lime);
+  letter-spacing: 3px;
+  text-shadow: var(--bloom-lime);
+  animation: blink .32s steps(1, end) infinite;
+}
+
+/* ---- keypad ---- */
+
+.lock__pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: min(300px, 78vw);
+  margin-top: 6px;
+}
+
+.lock__key {
+  --bc: var(--ink);
+  padding: 0;
+  height: clamp(46px, 13vw, 56px);
+  font-size: var(--fs-lg); /* digits need the size to stay unambiguous */
+  background: var(--bg-2);
+}
+
+.lock__key--fn { --bc: var(--faint); color: var(--muted) }
+.lock__key--fn:hover { --bc: var(--acc); color: var(--acc) }
+
+.lock__hint {
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--gold);
+  max-width: 32ch;
+  line-height: 1.3;
+  animation: fade-up 400ms ease both;
+}
+
+/* ---- whole-screen state flashes ---- */
+
+.lock--error { animation: lock-flash-red 500ms steps(2, end) }
+.lock--success { animation: lock-flash-green 700ms steps(2, end) }
+
+@keyframes lock-flash-red {
+  0%, 100% { background: transparent }
+  30%      { background: color-mix(in srgb, var(--red) 14%, transparent) }
+}
+
+@keyframes lock-flash-green {
+  0%, 100% { background: transparent }
+  30%      { background: color-mix(in srgb, var(--lime) 18%, transparent) }
+}

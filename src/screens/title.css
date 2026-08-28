@@ -1,0 +1,107 @@
+.title {
+  cursor: pointer;
+  justify-content: center;
+  text-align: center;
+}
+
+.title__hud {
+  position: absolute;
+  top: clamp(10px, 3vw, 20px);
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 clamp(14px, 4vw, 30px);
+  padding-right: 110px; /* clears the fixed theme + sound toggles */
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.title__hud-item { display: inline-flex; align-items: center; gap: 3px }
+.title__hud-item--right { margin-left: auto }
+
+.title__inner {
+  justify-content: center;
+  align-items: center;
+  gap: clamp(14px, 3.5vw, 26px);
+}
+
+.title__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 3px;
+  color: var(--gold);
+  animation: softpulse 2.4s infinite ease-in-out;
+}
+
+.title__main {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 2vw, 14px);
+  line-height: 1.15;
+}
+
+.title__line {
+  display: block;
+  font-size: var(--fs-xl);
+  letter-spacing: 2px;
+}
+
+.title__line--a {
+  color: var(--acc);
+  text-shadow: var(--sh-title-a);
+}
+
+.title__line--b {
+  color: var(--ink);
+  text-shadow: var(--sh-title-b);
+}
+
+.wave__ch {
+  display: inline-block;
+  animation: wave 2.2s ease-in-out infinite;
+  white-space: pre;
+}
+
+.title__name {
+  --bc: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  margin-top: 6px;
+  font-size: var(--fs-lg);
+  color: var(--gold);
+  letter-spacing: 2px;
+  background: var(--bg-1);
+  animation: glow-breathe 3.2s ease-in-out infinite;
+}
+
+.title__tagline {
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.title__start {
+  margin-top: clamp(10px, 3vw, 22px);
+  padding: 6px 4px;
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  letter-spacing: 3px;
+  color: var(--text);
+  text-shadow: var(--bloom-text);
+  animation: blink 1.05s steps(1, end) infinite;
+}
+
+.title__coin {
+  font-size: var(--fs-2xs);
+  color: var(--dim);
+  letter-spacing: 2px;
+}

@@ -1,0 +1,328 @@
+/* ===========================================================================
+   GALLERY — a text-free mosaic. Tiles vary in size on a fixed rhythm so the
+   grid never reads as a plain table, `dense` packing closes the gaps the
+   bigger tiles leave behind, and every tile carries its own accent colour.
+   =========================================================================*/
+
+.gal__shuffle { margin-left: auto }
+
+.gal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 22vw, 190px), 1fr));
+  grid-auto-rows: clamp(120px, 22vw, 190px);
+  grid-auto-flow: dense;
+  gap: clamp(8px, 1.8vw, 14px);
+  margin-bottom: clamp(20px, 4vw, 32px);
+}
+
+/* one or two photos shouldn't sit in a lonely corner of a wide grid */
+.gal__grid.is-sparse {
+  grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 40vw, 320px), max-content));
+  grid-auto-rows: auto;
+  justify-content: center;
+}
+
+.gal__grid.is-sparse .gal__tile { grid-column: auto; grid-row: auto }
+.gal__grid.is-sparse .gal__frame { width: clamp(200px, 40vw, 320px); aspect-ratio: 3 / 4 }
+
+.gal__tile {
+  --bc: var(--edge);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 190px;
+  position: relative;
+  display: block;
+  padding: var(--px);
+  background: var(--bg-1);
+  /* `backwards`, not `both`: a filled `both` holds the interpolated identity
+     (`blur(0px) saturate(1)…`) forever rather than `none`, leaving all 55
+     tiles with a live filter and its own paint path. */
+  animation: tile-resolve 620ms steps(6, end) backwards;
+  transition: transform 140ms steps(2, end), box-shadow 160ms, opacity 200ms;
+}
+
+/* Photos arrive the way an image used to load on a slow connection: coarse
+   and washed out, snapping into focus in a few discrete stages. `steps()`
+   matters — it recomputes the blur 6 times instead of 60. */
+@keyframes tile-resolve {
+  0% {
+    opacity: 0;
+    transform: scale(1.09);
+    filter: blur(7px) saturate(.35) contrast(1.7) brightness(1.3);
+  }
+  45% {
+    opacity: 1;
+    filter: blur(3px) saturate(.7) contrast(1.3) brightness(1.1);
+  }
+  75% {
+    filter: blur(1px) saturate(1) contrast(1.08) brightness(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.gal__tile.is-wide { grid-column: span 2 }
+.gal__tile.is-tall { grid-row: span 2 }
+.gal__tile.is-big  { grid-column: span 2; grid-row: span 2 }
+
+/* viewfinder brackets mark the feature tiles — inside the box, because
+   content-visibility clips anything painted outside it */
+.gal__tile.is-big::before,
+.gal__tile.is-big::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  opacity: .9;
+}
+
+.gal__tile.is-big::before {
+  top: 9px;
+  left: 9px;
+  border-top: 3px solid var(--tile-accent, var(--acc));
+  border-left: 3px solid var(--tile-accent, var(--acc));
+}
+
+.gal__tile.is-big::after {
+  bottom: 9px;
+  right: 9px;
+  border-bottom: 3px solid var(--tile-accent, var(--acc));
+  border-right: 3px solid var(--tile-accent, var(--acc));
+}
+
+/* a big tile is a nice idea until the screen is 360px wide */
+@media (max-width: 520px) {
+  .gal__tile.is-tall { grid-row: span 1 }
+  .gal__tile.is-big { grid-column: span 2; grid-row: span 2 }
+  .gal__tile.is-big::before,
+  .gal__tile.is-big::after { width: 14px; height: 14px }
+}
+
+/* Spotlight: hovering one photo quiets the rest.
+   Deliberately NOT behind `@media (hover: hover)` — that query reports false
+   under DevTools device emulation and on touch-capable laptops, which is
+   exactly where this was reported missing. On a real touch device the tap
+   opens the lightbox instantly, so the dim never lingers. */
+.gal__grid:hover .gal__tile { opacity: .42 }
+.gal__grid:hover .gal__tile:hover { opacity: 1 }
+
+/* Attract mode: same treatment, driven by a timer instead of a pointer, so the
+   gallery is never inert on a device that has no hover. The `.is-lit` pair
+   needs the extra class to out-specify the dimming rule above it. */
+.gal__grid.is-auto .gal__tile { opacity: .42 }
+.gal__grid.is-auto .gal__tile.is-lit { opacity: 1 }
+
+.gal__tile:hover,
+.gal__tile:focus-visible,
+.gal__tile.is-lit {
+  --bc: var(--tile-accent, var(--ink));
+  outline: none;
+  z-index: 2;
+  opacity: 1;
+  transform: translateY(calc(var(--px) * -1)) scale(1.02);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc),
+    var(--bloom, 0 0 30px -4px var(--bc));
+}
+
+/* Touch has no hover at all — Chrome dispatches no move events for a pointer
+   that isn't pressed — so a press state is the only feedback a phone (or
+   DevTools device emulation) can give. */
+.gal__tile:active {
+  --bc: var(--tile-accent, var(--ink));
+  z-index: 2;
+  opacity: 1;
+  transform: scale(.97);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc),
+    var(--bloom, 0 0 30px -4px var(--bc));
+}
+
+.gal__tile:active .gal__media { transform: scale(1.04) }
+
+.gal__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--stage);
+}
+
+.gal__media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 420ms cubic-bezier(.2, .9, .3, 1);
+}
+
+.gal__tile.is-lit .gal__media { transform: scale(1.07) }
+.gal__tile.is-lit .gal__glint { opacity: 1; animation: sheen 1500ms ease-out }
+
+/* the photo leans away from the cursor; --mx/--my are written on mousemove */
+.gal__tile:hover .gal__media {
+  transform:
+    scale(1.09)
+    translate(calc(var(--mx, 0) * -9px), calc(var(--my, 0) * -9px));
+}
+
+/* CRT texture over every tile, so photos sit inside the world of the site */
+.gal__scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--scanline) 0 1px,
+    transparent 1px 3px
+  );
+  opacity: .55;
+}
+
+/* a light sweep in the tile's own colour, on hover */
+.gal__glint {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    color-mix(in srgb, var(--tile-accent, var(--acc)) 30%, transparent),
+    transparent
+  );
+  opacity: 0;
+  transform: translateX(-140%);
+}
+
+.gal__tile:hover .gal__glint { opacity: 1; animation: sheen 900ms ease-out }
+
+.gal__vbadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  background: var(--gold);
+  box-shadow: var(--bloom-gold);
+}
+
+/* ==============================  LIGHTBOX  ============================= */
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(8px, 2vw, 20px);
+  padding: clamp(56px, 9vw, 78px) clamp(10px, 3vw, 28px);
+  background: var(--scrim);
+  animation: fade-up 180ms ease both;
+}
+
+.lb__box {
+  --bc: var(--ink);
+  position: relative;
+  justify-self: center;
+  max-width: min(880px, 100%);
+  max-height: 100%;
+  padding: var(--px);
+  background: var(--bg-1);
+  overflow: hidden;
+}
+
+/* used only when the lightbox is opened without a tile to grow from
+   (the shuffle button), since there is no origin rect to FLIP from */
+.lb__box.is-popped { animation: pop-in 300ms steps(5, end) backwards }
+
+.lb__media {
+  display: block;
+  max-width: 100%;
+  max-height: min(72dvh, 760px);
+  width: auto;
+  object-fit: contain;
+}
+
+/* a slow drift across the photo, so a still image still feels alive */
+.lb__media--drift { animation: kenburns 20s ease-in-out infinite alternate }
+
+@keyframes kenburns {
+  from { transform: scale(1) translate3d(0, 0, 0) }
+  to   { transform: scale(1.07) translate3d(-1.2%, 1%, 0) }
+}
+
+.lb__scan {
+  position: absolute;
+  inset: var(--px);
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--scanline) 0 1px,
+    transparent 1px 4px
+  );
+  opacity: .4;
+}
+
+.lb__nav { align-self: center }
+
+/* top-right belongs to the fixed theme/sound HUD, so the tools live left */
+.lb__tools {
+  position: absolute;
+  top: clamp(10px, 2.5vw, 18px);
+  left: clamp(10px, 2.5vw, 18px);
+  display: flex;
+  gap: 8px;
+}
+
+.lb__dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(14px, 3vw, 24px);
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 20px;
+}
+
+.lb__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--faint);
+}
+
+/* many items: the dots become a segmented strip so they stay one tidy line */
+.lb__dots.is-many { gap: 2px; padding: 0 clamp(14px, 6vw, 40px) }
+.lb__dots.is-many .lb__dot { width: auto; flex: 1; height: 5px; min-width: 2px }
+
+.lb__dot.is-on {
+  background: var(--gold);
+  box-shadow: var(--bloom-gold);
+}
+
+@media (max-width: 560px) {
+  .lb { grid-template-columns: minmax(0, 1fr) }
+  .lb__nav {
+    position: absolute;
+    bottom: clamp(38px, 8vw, 56px);
+    z-index: 2;
+  }
+  .lb__nav--prev { left: clamp(12px, 6vw, 30px) }
+  .lb__nav--next { right: clamp(12px, 6vw, 30px) }
+}

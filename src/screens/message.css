@@ -1,0 +1,160 @@
+.msg .screen__inner { justify-content: flex-start }
+
+.msg__stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding-bottom: clamp(20px, 6vw, 60px);
+}
+
+/* ---- sealed envelope ---- */
+
+.msg__seal-wrap {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 6vw, 50px) 0;
+}
+
+.msg__seal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.msg__seal-env {
+  --bc: var(--ink);
+  display: grid;
+  place-items: center;
+  padding: clamp(24px, 7vw, 44px);
+  background: var(--bg-1);
+  animation: bob 2.4s ease-in-out infinite, glow-breathe 3s ease-in-out infinite;
+  transition: transform 140ms steps(2, end);
+}
+
+.msg__seal:hover .msg__seal-env { transform: scale(1.04) }
+.msg__seal:active .msg__seal-env { transform: scale(.97) }
+
+.msg__seal-label {
+  font-size: var(--fs-sm);
+  color: var(--gold);
+  letter-spacing: 3px;
+  animation: blink 1.1s steps(1, end) infinite;
+}
+
+.msg__seal-to {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* ---- dialogue box ---- */
+
+.msg__box {
+  --bc: var(--ink);
+  width: 100%;
+  max-width: 720px; /* keeps the prose to a readable measure */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-1);
+  cursor: pointer;
+  animation: pop-in 300ms steps(5, end) both;
+}
+
+.msg__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  box-shadow: inset 0 calc(var(--px) * -1) 0 0 var(--inset);
+}
+
+.msg__avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: var(--well);
+  animation: softpulse 1.8s ease-in-out infinite;
+}
+
+.msg__bar-title {
+  font-size: var(--fs-sm);
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.msg__page {
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.msg__body {
+  padding: clamp(18px, 4.5vw, 32px);
+  min-height: clamp(200px, 34dvh, 280px);
+}
+
+.msg__text {
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  line-height: 1.42;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.caret {
+  display: inline-block;
+  width: .55em;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -.12em;
+  background: var(--ink);
+  box-shadow: 0 0 10px var(--ink);
+  animation: blink .6s steps(1, end) infinite;
+}
+
+.msg__signoff {
+  margin-top: 24px;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  color: var(--gold);
+  text-align: right;
+  animation: fade-up 400ms ease both;
+}
+
+.msg__foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-2);
+}
+
+.msg__dots { display: flex; gap: 6px }
+
+.msg__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--faint);
+}
+
+.msg__dot.is-on { background: var(--ink); box-shadow: 0 0 8px var(--ink) }
+
+.msg__next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.msg__tri { display: inline-flex; opacity: .35 }
+.msg__tri.is-ready { opacity: 1; animation: bob .55s steps(2, end) infinite }
+
+.msg__done { font-size: var(--fs-2xs) }

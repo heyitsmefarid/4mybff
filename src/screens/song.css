@@ -1,0 +1,511 @@
+/* =====================  LAYOUT  =====================
+   Top: sleeve + track info, full width.
+   Below: the player on one side, the letter on the other.
+   On a wide screen the page itself does not scroll — only the letter does.
+   On a phone that would mean two nested scrollbars, so there it stacks and
+   the page scrolls normally with the player pinned to the bottom.
+   ==================================================== */
+
+/* the sleeve and track info live inside the player card now */
+.song__hero {
+  display: grid;
+  grid-template-columns: clamp(88px, 26vw, 128px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 3vw, 18px);
+}
+
+.song__split {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 3vw, 22px);
+  min-height: 0;
+}
+
+@media (min-width: 900px) {
+  .song {
+    height: 100dvh;
+    overflow: hidden;                 /* only the letter scrolls */
+  }
+
+  .song__inner { min-height: 0 }
+
+  .song__split {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .song__player,
+  .song .letter { min-height: 0 }
+}
+
+/* ---- sleeve + the record that slides out of it ---- */
+
+.song__art { position: relative }
+
+/* a bloom behind the sleeve that swells with the low end */
+.song__art::after {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--ink), transparent 68%);
+  filter: blur(16px);
+  opacity: calc(var(--beat, 0) * .5);
+  will-change: opacity;
+  pointer-events: none;
+}
+
+.song__disc {
+  position: absolute;
+  top: 50%;
+  right: 6%;
+  width: 82%;
+  aspect-ratio: 1;
+  z-index: 0;
+  transform: translate(0, -50%) scale(.92);
+  transition: transform 520ms cubic-bezier(.2, .9, .3, 1);
+  pointer-events: none;
+  opacity: .9;
+}
+
+.song__disc.is-out { transform: translate(17%, -50%) scale(1) }
+
+.song__disc-face {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--ink) 0 9%, transparent 9.5%),
+    radial-gradient(circle at 50% 50%, var(--bg-0) 9.5% 15%, transparent 15.5%),
+    conic-gradient(from 0deg,
+      rgba(255, 255, 255, .16) 0deg 12deg,
+      transparent 12deg 90deg,
+      rgba(255, 255, 255, .10) 90deg 100deg,
+      transparent 100deg 180deg,
+      rgba(255, 255, 255, .16) 180deg 192deg,
+      transparent 192deg 270deg,
+      rgba(255, 255, 255, .10) 270deg 280deg,
+      transparent 280deg 360deg),
+    repeating-radial-gradient(circle at 50% 50%,
+      #15121c 0 2px, #221d2e 2px 4px);
+  box-shadow: 0 0 0 var(--px) var(--edge), var(--bloom, 0 0 30px -4px var(--bc));
+  --bc: var(--ink);
+}
+
+.song__disc.is-out .song__disc-face {
+  animation: disc-spin 2.6s steps(18, end) infinite;
+}
+
+@keyframes disc-spin { to { transform: rotate(360deg) } }
+
+.song__disc-pin {
+  display: grid;
+  place-items: center;
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--bg-0);
+}
+
+/* ---- cover art ---- */
+
+.song__cover {
+  --bc: var(--ink);
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--stage);
+  animation: pop-in 340ms steps(5, end) both;
+}
+
+.song__cover.is-playing { animation: pop-in 340ms steps(5, end) both, glow-breathe 2.6s ease-in-out infinite }
+
+.song__cover { z-index: 1 }
+
+.song__cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(calc(1 + var(--beat, 0) * 0.045));
+  transition: transform 90ms linear;
+}
+
+.song__cover-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--scanline) 0 2px,
+    transparent 2px 5px
+  );
+  pointer-events: none;
+}
+
+/* ---- track meta ---- */
+
+.song__meta {
+  position: relative;
+  z-index: 2;              /* the record slides behind this, never over it */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.song__now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+.song__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--faint);
+}
+
+.song__dot.is-on {
+  background: var(--lime);
+  box-shadow: 0 0 10px var(--lime);
+  animation: blink 1.4s steps(1, end) infinite;
+}
+
+.song__title {
+  font-size: var(--fs-lg);
+  color: var(--gold);
+  line-height: 1.4;
+  letter-spacing: 1px;
+}
+
+.song__artist {
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.song__album {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--muted);
+  line-height: 1.1;
+}
+
+/* ---- lyrics ---- */
+
+.song__right {
+  --bc: var(--acc);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-1);
+}
+
+.song__lyr-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 3px;
+  color: var(--acc);
+  background: var(--bg-2);
+  box-shadow: inset 0 calc(var(--px) * -1) 0 0 var(--inset);
+}
+
+.song__lyrics {
+  flex: 1;
+  overflow-y: auto;
+  padding: clamp(14px, 3vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: clamp(240px, 40dvh, 420px);
+  scroll-behavior: smooth;
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+
+.song__line {
+  padding: 7px 10px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-lg);
+  line-height: 1.25;
+  color: var(--dim);
+  transition: color 180ms, transform 180ms steps(3, end);
+}
+
+.song__line:hover { color: var(--muted) }
+.song__line.is-past { color: var(--muted) }
+
+.song__line.is-active {
+  color: var(--gold);
+  text-shadow: var(--bloom-gold);
+  transform: translateX(6px);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
+}
+
+.song__lyr-empty {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--dim);
+}
+
+.song__playhead {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px var(--gold));
+  transition: left 220ms linear;
+}
+
+/* ---- cassette ---- */
+
+.tape {
+  --bc: var(--edge);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: var(--well);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc);
+}
+
+.tape__deck {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 clamp(10px, 3vw, 20px);
+  height: clamp(54px, 8vw, 74px);
+  background: var(--stage);
+}
+
+/* the exposed tape running between the two spools */
+.tape__strand {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 50%;
+  height: 3px;
+  background: var(--ink-dim);
+  opacity: .8;
+}
+
+.tape__reel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--edge);
+}
+
+/* how much tape is wound on this spool right now */
+.tape__wound {
+  position: absolute;
+  width: calc(38% + var(--fill, .5) * 58%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: .45;
+  transition: width 500ms linear;
+}
+
+.tape__hub {
+  position: relative;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 0deg,
+      var(--gold) 0deg 14deg, transparent 14deg 45deg);
+  box-shadow: 0 0 0 2px var(--bg-1);
+}
+
+.tape__hub.is-spinning { animation: disc-spin 1.6s steps(12, end) infinite }
+
+.tape__lip {
+  height: 6px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--edge) 0 6px,
+    transparent 6px 12px
+  );
+  opacity: .7;
+}
+
+/* ---- spectrum ---- */
+
+.viz {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 2px;
+}
+
+.viz__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: clamp(48px, 9vw, 78px);
+}
+
+.viz__bar {
+  flex: 1;
+  height: 100%;
+  transform: scaleY(.05);
+  transform-origin: bottom;
+  background: linear-gradient(to top, var(--ink) 0%, var(--violet) 45%, var(--acc) 100%);
+  opacity: .35;
+  transition: opacity 260ms;
+}
+
+.viz.is-on .viz__bar { opacity: 1 }
+
+/* Paused: the bars breathe in a slow travelling wave (the per-bar delay is
+   already staggered inline) instead of collapsing to a dead flat line. */
+.viz:not(.is-on) .viz__bar {
+  animation: idle-wave 3.2s ease-in-out infinite;
+  opacity: .55;
+}
+
+@keyframes idle-wave {
+  0%, 100% { transform: scaleY(.07) }
+  50%      { transform: scaleY(.34) }
+}
+
+/* no audio to analyse: fall back to the canned bounce so it never looks dead */
+.viz.is-sim.is-on .viz__bar {
+  animation-name: eq;
+  animation-timing-function: steps(4, end);
+  animation-iteration-count: infinite;
+}
+
+.viz__floor {
+  height: var(--px);
+  background: var(--edge);
+  box-shadow: 0 0 18px -6px var(--ink);
+}
+
+.viz__bars--mirror {
+  height: clamp(22px, 4.5vw, 38px);
+  transform: scaleY(-1);
+  opacity: .3;
+  -webkit-mask-image: linear-gradient(to top, transparent, #000 90%);
+  mask-image: linear-gradient(to top, transparent, #000 90%);
+}
+
+/* ---- player bar ---- */
+
+.song__player {
+  --bc: var(--gold);
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(12px, 2.4vw, 18px);
+  padding: clamp(14px, 3vw, 20px);
+  margin-bottom: var(--px);
+  background: var(--bg-1);
+}
+
+@media (min-width: 900px) {
+  .song__player {
+    position: static;
+    margin-bottom: 0;
+    /* the stack sits as one centred block with even gaps, rather than the
+       spectrum stretching and leaving a hole under the cassette */
+    justify-content: center;
+    gap: clamp(14px, 2.2vh, 26px);
+  }
+
+  .song__player .viz { flex: none }
+  .song__player .viz__bars { flex: none; height: clamp(64px, 11vh, 108px) }
+  .song__player .viz__bars--mirror { height: clamp(22px, 4vh, 38px) }
+}
+
+.song__scrub {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.song__time {
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  letter-spacing: 1px;
+  min-width: 4.5ch;
+}
+
+.song__bar {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.song__bar:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px }
+
+.song__seg {
+  flex: 1;
+  height: 10px;
+  background: var(--track);
+  transition: background 90ms, height 90ms;
+}
+
+.song__seg.is-on { background: var(--ink) }
+
+.song__seg.is-head {
+  height: 18px;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+.song__bar:hover .song__seg.is-on { background: color-mix(in srgb, var(--ink) 78%, white) }
+
+.song__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 3vw, 16px);
+}
+
+.song__play {
+  width: clamp(54px, 15vw, 64px);
+  height: clamp(54px, 15vw, 64px);
+  padding: 0;
+  background: var(--gold);
+}
+
+.song__play:hover { background: color-mix(in srgb, var(--gold) 80%, white) }
+
+.song__notice {
+  text-align: center;
+  font-size: var(--fs-2xs);
+  color: var(--dim);
+  letter-spacing: 1px;
+  line-height: 1.8;
+}

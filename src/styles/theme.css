@@ -1,0 +1,292 @@
+/* ===========================================================================
+   THEME — palette tokens, type scale, shared keyframes, pixel primitives
+
+   Two themes, set by `data-theme` on <html>:
+     night (default) — neon arcade. Colour bleeds; light sources glow.
+     day             — pastel arcade. Neon reads as mud on white, so glow is
+                       swapped for hard offset shadows: stickers, not lamps.
+   Anything theme-dependent lives here as a token. Screens never hardcode.
+   =========================================================================*/
+
+:root,
+:root[data-theme='night'] {
+  /* ---- surfaces ---- */
+  --bg-0: #0d0418;   /* deepest void            */
+  --bg-1: #1a0b2e;   /* panel                   */
+  --bg-2: #2a1250;   /* raised surface          */
+  --bg-3: #3d1b6e;   /* hover / selected        */
+  --well: #120726;   /* recessed inset (slots, badges, meter track) */
+  --stage: #0a0416;  /* media stage behind photos */
+  --track: #2a1250;  /* unfilled meter segment  */
+  --edge: #33215c;   /* quiet tile border       */
+  --scrim: rgba(6, 2, 12, .88);
+
+  /* ---- ink ---- */
+  --ink: #ff4d9d;    /* hot pink — primary      */
+  --ink-dim: #a32e63;
+  --acc: #4deeea;    /* cyan — secondary        */
+  --acc-dim: #2a8a88;
+  --gold: #ffd93d;   /* highlight / star        */
+  --violet: #c084fc;
+  --lime: #5bff9b;   /* success                 */
+  --red: #ff3b5c;    /* error                   */
+
+  --text: #f8f0ff;
+  --muted: #9a86b8;
+  --faint: #5c4a7a;  /* quiet borders / inactive structure */
+  --dim: #7d68a3;    /* dim TEXT that must still be readable */
+
+  /* ---- light behaviour ----
+     NOTE: night deliberately does NOT define --bloom. A custom property that
+     references var(--bc) is resolved where it is DECLARED, and --bc does not
+     exist on :root, so it would compute invalid and every descendant would
+     inherit nothing (silently killing box-shadow on .px-box.is-glow). Instead
+     each use site writes `var(--bloom, <night value>)`, so the fallback is
+     resolved locally where --bc really does exist. */
+  --breathe-lo: 0 0 10px rgba(255, 77, 157, .35);
+  --breathe-hi: 0 0 26px rgba(255, 77, 157, .75);
+  --sh-ink: 0 0 8px rgba(255, 77, 157, .8), 0 0 20px rgba(255, 77, 157, .35);
+  --sh-acc: 0 0 8px rgba(77, 238, 234, .8), 0 0 20px rgba(77, 238, 234, .35);
+  --sh-gold: 0 0 8px rgba(255, 217, 61, .85), 0 0 22px rgba(255, 217, 61, .4);
+  --sh-title-a: 3px 3px 0 #0b3f3e, 0 0 18px rgba(77, 238, 234, .65), 0 0 44px rgba(77, 238, 234, .3);
+  --sh-title-b: 3px 3px 0 #5c1236, 0 0 18px rgba(255, 77, 157, .7), 0 0 44px rgba(255, 77, 157, .35);
+  --dot-glow: 0 0 10px currentColor;
+  --scanline: rgba(0, 0, 0, .28);
+  --hairline: rgba(255, 255, 255, .05);
+  --overlay: rgba(10, 4, 22, .85);
+  --bloom-ink: 0 0 8px rgba(255, 77, 157, .8);
+  --bloom-gold: 0 0 12px rgba(255, 217, 61, .7);
+  --bloom-red: 0 0 10px rgba(255, 59, 92, .6);
+  --bloom-lime: 0 0 14px rgba(91, 255, 155, .8);
+  --bloom-text: 0 0 10px rgba(248, 240, 255, .6);
+  --inset: rgba(0, 0, 0, .45);
+  --scan-opacity: .16;
+  --sweep: rgba(255, 255, 255, .035);
+  --vignette: radial-gradient(ellipse at center, transparent 42%, rgba(13, 4, 24, .55) 88%, rgba(13, 4, 24, .92) 100%);
+}
+
+:root[data-theme='day'] {
+  /* ---- surfaces ---- */
+  --bg-0: #fff2f7;
+  --bg-1: #fffdfe;
+  --bg-2: #ffe6f0;
+  --bg-3: #ffd2e5;
+  --well: #fdedf4;
+  --stage: #f7eaf1;
+  --track: #f6dbe8;
+  --edge: #e8cddc;
+  --scrim: rgba(74, 40, 78, .55);
+
+  /* ---- ink: darkened until each one carries text on white ---- */
+  --ink: #e0357f;
+  --ink-dim: #f5a3c6;
+  --acc: #0d9491;
+  --acc-dim: #7fd4d2;
+  --gold: #b87400;
+  --violet: #8b4fd6;
+  --lime: #1a9256;
+  --red: #d61f42;
+
+  --text: #3b2447;
+  --muted: #7a6690;
+  --faint: #bda9d0;  /* quiet borders / inactive structure */
+  --dim: #8b74a8;    /* dim TEXT that must still be readable */
+
+  /* ---- light behaviour: no bloom, hard offset shadow instead ---- */
+  --bloom: 5px 5px 0 0 rgba(97, 55, 110, .16);
+  --breathe-lo: 4px 4px 0 rgba(224, 53, 127, .18);
+  --breathe-hi: 7px 7px 0 rgba(224, 53, 127, .32);
+  --sh-ink: 2px 2px 0 rgba(224, 53, 127, .22);
+  --sh-acc: 2px 2px 0 rgba(13, 148, 145, .22);
+  --sh-gold: 2px 2px 0 rgba(184, 116, 0, .25);
+  --sh-title-a: 4px 4px 0 #9be6e4, 8px 8px 0 rgba(97, 55, 110, .12);
+  --sh-title-b: 4px 4px 0 #ffc2dc, 8px 8px 0 rgba(97, 55, 110, .12);
+  --dot-glow: none;
+  --scanline: rgba(97, 55, 110, .10);
+  --hairline: rgba(97, 55, 110, .08);
+  --overlay: rgba(52, 30, 62, .74);
+  --bloom-ink: 1px 1px 0 rgba(224, 53, 127, .35);
+  --bloom-gold: 1px 1px 0 rgba(184, 116, 0, .38);
+  --bloom-red: 1px 1px 0 rgba(214, 31, 66, .32);
+  --bloom-lime: 1px 1px 0 rgba(26, 146, 86, .32);
+  --bloom-text: 1px 1px 0 rgba(97, 55, 110, .28);
+  --inset: rgba(97, 55, 110, .16);
+  --scan-opacity: .05;
+  /* a faint DARK band: on a light page a white sweep just bleaches the text
+     it crosses instead of reading as a moving highlight. */
+  --sweep: rgba(97, 55, 110, .05);
+  --vignette: radial-gradient(ellipse at center, transparent 46%, rgba(224, 53, 127, .07) 86%, rgba(139, 79, 214, .12) 100%);
+}
+
+:root {
+  /* ---- type ---- */
+  --font-display: 'Press Start 2P', 'Courier New', monospace;
+  --font-body: 'VT323', 'Press Start 2P', 'Courier New', monospace;
+
+  --fs-2xs: clamp(6px, 1.5vw, 7px);
+  --fs-xs: clamp(7px, 1.9vw, 9px);
+  --fs-sm: clamp(8px, 2.2vw, 10px);
+  --fs-md: clamp(10px, 2.8vw, 13px);
+  --fs-lg: clamp(13px, 4.2vw, 19px);
+  --fs-xl: clamp(20px, 7.5vw, 44px);
+
+  --fs-body: clamp(17px, 4.4vw, 23px);
+  --fs-body-lg: clamp(20px, 5.2vw, 28px);
+
+  /* ---- structure ---- */
+  --px: 4px;                       /* one "pixel" of the art grid */
+  --shell-max: 940px;
+
+  --ease-step: steps(4, end);
+}
+
+/* ===========================  KEYFRAMES  ================================ */
+
+@keyframes blink        { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+@keyframes softpulse    { 0%, 100% { opacity: 1 } 50% { opacity: .55 } }
+
+@keyframes bob          { 0%, 100% { transform: translateY(0) }
+                          50%      { transform: translateY(calc(var(--px) * -1)) } }
+
+@keyframes bob-x        { 0%, 100% { transform: translateX(0) }
+                          50%      { transform: translateX(var(--px)) } }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0) }
+  15%      { transform: translateX(-10px) }
+  30%      { transform: translateX(9px) }
+  45%      { transform: translateX(-7px) }
+  60%      { transform: translateX(5px) }
+  75%      { transform: translateX(-3px) }
+  90%      { transform: translateX(2px) }
+}
+
+@keyframes flicker {
+  0%, 100%   { opacity: var(--scan-opacity) }
+  47%        { opacity: var(--scan-opacity) }
+  48%        { opacity: calc(var(--scan-opacity) * 1.9) }
+  49%        { opacity: calc(var(--scan-opacity) * .75) }
+  50%        { opacity: calc(var(--scan-opacity) * 1.4) }
+  51%        { opacity: var(--scan-opacity) }
+}
+
+/* CRT power-on: a hairline that snaps open into a full screen */
+@keyframes crt-on {
+  0%   { transform: scale(1, .004); filter: brightness(6); opacity: 0 }
+  12%  { transform: scale(1, .004); filter: brightness(6); opacity: 1 }
+  38%  { transform: scale(1, .012); filter: brightness(4) }
+  60%  { transform: scale(1, 1);    filter: brightness(2.4) }
+  78%  { filter: brightness(1.1) }
+  /* MUST end at none, not scale(1)/brightness(1): any lingering transform or
+     filter would make .app a containing block for position:fixed, which pins
+     the starfield and CRT overlay to the page instead of the viewport (and
+     lets them add to the page height). */
+  100% { transform: none; filter: none; opacity: 1 }
+}
+
+@keyframes wipe-in  { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+@keyframes wipe-out { from { transform: scaleY(1) } to { transform: scaleY(0) } }
+
+@keyframes rise {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg);        opacity: 0 }
+  10%  { opacity: .9 }
+  90%  { opacity: .55 }
+  100% { transform: translate3d(var(--drift, 20px), -110vh, 0) rotate(var(--spin, 25deg)); opacity: 0 }
+}
+
+@keyframes fall {
+  0%   { transform: translate3d(0, -12vh, 0) rotate(0deg);   opacity: 1 }
+  100% { transform: translate3d(var(--drift, 40px), 108vh, 0) rotate(var(--spin, 540deg)); opacity: .85 }
+}
+
+/* Drift is a transform, never background-position: animating the background
+   repaints the whole viewport every frame (it measured ~15fps), while a
+   translate is composited on the GPU. Each shift equals one background tile,
+   so the loop is seamless. */
+@keyframes drift-slow { to { transform: translate3d(0, -300px, 0) } }
+@keyframes drift-mid  { to { transform: translate3d(0, -340px, 0) } }
+
+/* day: clouds cross the sky sideways instead of stars falling past */
+@keyframes drift-x-slow { to { transform: translate3d(300px, 0, 0) } }
+@keyframes drift-x-mid  { to { transform: translate3d(-420px, 0, 0) } }
+
+@keyframes pop-in {
+  0%   { transform: scale(.2); opacity: 0 }
+  55%  { transform: scale(1.08); opacity: 1 }
+  100% { transform: scale(1) }
+}
+
+@keyframes fade-up {
+  from { transform: translateY(10px); opacity: 0 }
+  to   { transform: translateY(0);    opacity: 1 }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0) }
+  50%      { transform: translateY(-8px) }
+}
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(.18) }
+  20%      { transform: scaleY(.85) }
+  40%      { transform: scaleY(.35) }
+  60%      { transform: scaleY(1) }
+  80%      { transform: scaleY(.5) }
+}
+
+@keyframes sheen {
+  0%   { transform: translateX(-120%) }
+  100% { transform: translateX(220%) }
+}
+
+@keyframes glow-breathe {
+  0%, 100% { box-shadow: var(--breathe-lo) }
+  50%      { box-shadow: var(--breathe-hi) }
+}
+
+/* the whole tube blinks when the day/night switch is thrown */
+@keyframes theme-blink {
+  0%   { opacity: 0 }
+  18%  { opacity: .55 }
+  100% { opacity: 0 }
+}
+
+/* ====================  PIXEL PRIMITIVES (utilities)  ==================== */
+
+/* Hard 4px border with the notched corners of a real 8-bit frame. */
+.px-box {
+  --bc: var(--acc);
+  position: relative;
+  background: var(--bg-1);
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc);
+}
+
+/* Same frame, plus the theme's idea of a light source. */
+.px-box.is-glow {
+  box-shadow:
+    0 calc(var(--px) * -1) 0 0 var(--bc),
+    0 var(--px)            0 0 var(--bc),
+    calc(var(--px) * -1) 0 0 0 var(--bc),
+    var(--px) 0            0 0 var(--bc),
+    var(--bloom, 0 0 30px -4px var(--bc));
+}
+
+/* NOTE: there is deliberately no `.px-inset` utility — box-shadow is a single
+   property, so a second class would silently wipe out .px-box's frame. Any
+   element needing both writes one combined box-shadow in its own rule. */
+
+.glow-ink  { text-shadow: var(--sh-ink) }
+.glow-acc  { text-shadow: var(--sh-acc) }
+.glow-gold { text-shadow: var(--sh-gold) }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
